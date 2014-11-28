@@ -5,4 +5,3 @@ QBase
 
 ## Description
 A C++ class for create custom number bases and convert them.
-
