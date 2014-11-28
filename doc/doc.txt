@@ -1,0 +1,27 @@
+   /**
+    * Convert number from decimal to our base (as string)
+    *
+    * We do:
+    *   # decimalNumber % base.
+    *   # decimalNumber /= base.
+    *
+    * The result will be the decimal number of baseChars index.
+    *
+    * Example:
+    *   "convert 79D to hexadecimal base"
+    *   decimalNumber = 79D, baseChars = "0123456789ABCDEF", base = 16.
+    *
+    *            79D % base = 15, baseChars[15] = 'F'
+    *   4D (79D/16D) % base = 4 , baseChars[4 ] = '4'
+    *
+    *   Reverse it and add "0x" in the begin.
+    *
+    *   The result: 0x4f.
+    **/
+
+    /**
+     * Convert String in any base to decimal.
+     *
+     * We do:
+     *  numberInBase * pow(base, pathInNumber-1)
+     **/

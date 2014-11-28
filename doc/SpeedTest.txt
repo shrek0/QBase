@@ -1,0 +1,19 @@
+   ____    ____                
+  / __ \  / __ )____ _________ 
+ / / / / / __  / __ `/ ___/ _ \
+/ /_/ / / /_/ / /_/ (__  )  __/
+\___\_\/_____/\__,_/____/\___/ 
+                               
+== Speed test ==
+
+function: c
+	- test time: 10s -
+		A1: 1857459. (from the min)
+		A2: 1237200. (from the max)
+		A3: 1764677. (from the max, enhanced)
+		A4: 2078025. (frim the min, enhanced)
+	
+	- test time: 1m -
+		A1: 112640266.
+		A2:  74579524.
+		A3  104815935.
