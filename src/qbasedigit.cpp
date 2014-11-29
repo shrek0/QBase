@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 **  QBase Copyright (C) 2014 shrek0.
-**  Contact: shrek0tk(at)mail.com
+**  Contact: shrek0tk(at)gmail.com
 **
 **  This program is free software: you can redistribute it and/or modify
 **   it under the terms of the GNU General Public License as published by
