@@ -26,18 +26,16 @@ QBaseDigit::QBaseDigit(uint base) {
 }
 
 /**
- * @brief QBaseDigit::step and the next
- * @param steps
+ * @brief QBaseDigit::step and increment the next number.
+ * @param steps to increment.
  */
-void QBaseDigit::step(uint steps) {
+void QBaseDigit::step(int steps) {
     steps = decimalNumber + steps;
 
-    if(steps > base) {
+    decimalNumber = (steps % base);
+
+    if(steps >= base || -(steps) >= base)
         pNextDigit->step(steps / base);
-        decimalNumber += (steps % base);
-    } else {
-         decimalNumber = steps;
-    }
 
 }
 

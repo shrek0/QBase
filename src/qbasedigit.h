@@ -28,14 +28,14 @@ class QBaseDigit
 public:
     QBaseDigit(uint base);
 
-    uint getDecimalNumber() { return decimalNumber; }
+    int getDecimalNumber() { return decimalNumber; }
     void addNextDigit(QBaseDigit *pNextDigit);
 
-    void step(uint steps);
+    void step(int steps);
 
 private:
-    uint decimalNumber;
-    uint base;
+    int decimalNumber;
+    int base;
     QBaseDigit *pNextDigit;
 };
 

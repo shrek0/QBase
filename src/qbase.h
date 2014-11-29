@@ -36,9 +36,8 @@ public:
 
     ~QBase();
 
-    qulonglong toLong();
+    qlonglong toLong();
     const QString &toQString();
-    const char *toCharArray();
 
     uint getBase() { return d->base; }
 
@@ -47,24 +46,25 @@ public:
 
     void clear();
 
-    void step(uint steps = 1);
+    void step(int steps = 1);
 
 private:
     void init(const QString &baseChars);
     void erase();
 
+    void realloc();
     void addNewDigit();
 
-    void convertLongToQString(const qulonglong inputNumber, QString &outputQString);
+    void convertLongToQString(qulonglong inputNumber, QString &outputQString);
     void convertQStringToLong(const QString &inputQString, qulonglong &outputNumber);
 
-    QBaseDigit *pDigitsArray[];
+    QBaseDigit **pDigitsArray;
 
     struct Data {
         uint base;
         QString baseChars;
 
-        qulonglong longNumber;
+        qlonglong longNumber;
         QString qstringNumber;
 
         uint digitsMax;
@@ -72,7 +72,9 @@ private:
 
         bool minusFlag;
 
-        qulonglong nextDigitAddition;
+        qlonglong nextDigitAddition;
+
+        uint qstringCacheDigitsCahnged;
     };
 
     Data *d;

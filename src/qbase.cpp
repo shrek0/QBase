@@ -18,14 +18,15 @@
 **
 *****************************************************************************/
 
-#include "qbase.h"
-
 #include <QChar>
+#include <QVector>
 
 #include <cmath>
 
-QBase::QBase(const QString &baseChars) {
+#include "qbase.h"
 
+
+QBase::QBase(const QString &baseChars) {
     init(baseChars);
 }
 
@@ -50,6 +51,10 @@ QBase::~QBase() {
 }
 
 void QBase::erase() {
+    for(uint i = 0; i < d->digitsLen; ++i)
+        delete pDigitsArray[i];
+
+    delete[] pDigitsArray;
     delete d;
 }
 
@@ -62,9 +67,11 @@ void QBase::init(const QString &baseChars) {
 
     d->longNumber = 0;
     d->digitsLen = 1;
+    d->nextDigitAddition = d->base;
 
-    //pDigitsArray = new QBaseDigit*[DigitsMax];
-    //pDigitsArray[0] = QBaseDigit(base,chars);
+    pDigitsArray = new QBaseDigit*[d->digitsMax];
+    pDigitsArray[0] = new QBaseDigit(d->base);
+
 }
 
 void QBase::clear() {
@@ -76,19 +83,37 @@ void QBase::fromLong(qlonglong fromNumber) {
     clear();
 
     // Turn minusFlag on if fromNumber less than zero.
-    if(fromNumber < 0) {
-        d->longNumber = -(fromNumber);
+    if(fromNumber < 0)
         d->minusFlag = true;
-    }else{
-        d->longNumber = fromNumber;
+    else
         d->minusFlag = false;
-    }
+
+    d->longNumber = fromNumber;
 
     convertLongToQString(fromNumber, d->qstringNumber);
+    d->qstringCacheDigitsCahnged = d->qstringNumber.length();
+}
+
+const QString &QBase::toQString() {
+    //if(d->qstringCacheDigitsCahnged == 0)
+    //    return d->qstringNumber;
+
+    if(d->minusFlag == true)
+        for(uint i = 0; i < d->digitsLen; ++i)
+            d->qstringNumber[d->digitsLen-i] = d->baseChars.at(-(pDigitsArray[i]->getDecimalNumber()));
+    else
+        for(uint i = 0; i < d->digitsLen; ++i)
+            d->qstringNumber[d->digitsLen-i] = d->baseChars.at(pDigitsArray[i]->getDecimalNumber());
+
+    d->qstringCacheDigitsCahnged = 0;
+
+    return d->qstringNumber;
+
 }
 
 void QBase::fromQString(QString &fromNumber) {
     d->longNumber = 0;
+    qulonglong temp = 0;
 
     clear();
 
@@ -101,26 +126,30 @@ void QBase::fromQString(QString &fromNumber) {
     }
 
     d->qstringNumber = fromNumber;
-    convertQStringToLong(fromNumber, d->longNumber);
+    convertQStringToLong(fromNumber, temp);
 
+    d->longNumber = temp;
+
+    d->qstringCacheDigitsCahnged = 1;
         // Install bases..
 }
 
 /**
- * @brief QBase::convertLongToQString convert long number to string.
+ * @brief QBase::convertLongToQString
  * @param unsigned inputNumber to convert.
  * @param outputQString to convert.
  *
  * This function has a description in the documentation.
  */
-void QBase::convertLongToQString(const qulonglong inputNumber, QString &outputQString) {
+
+void QBase::convertLongToQString(qulonglong inputNumber, QString &outputQString) {
     uint numberLength = 0;
     QChar tempVariable = 0;
 
     while(inputNumber) {
-        outputQString += baseChars.at(inputNumber % base);
+        outputQString += d->baseChars.at(inputNumber % d->base);
 
-        inputNumber /=  base;
+        inputNumber /=  d->base;
     }
 
     numberLength = outputQString.length();
@@ -152,6 +181,50 @@ void QBase::convertQStringToLong(const QString &inputQString, qulonglong &output
     }
 }
 
-void QBase::step(uint steps) {
+void QBase::step(int steps) {
+    d->longNumber+=steps;
+
+    if(-(d->longNumber) >= d->nextDigitAddition || d->longNumber >= d->nextDigitAddition)
+        addNewDigit();
+
     pDigitsArray[0]->step(steps);
+
+    if(d->minusFlag == false && d->longNumber < 0)
+        d->minusFlag = true;
+    else if(d->minusFlag == true && d->longNumber > 0)
+        d->minusFlag = false;
+
+    //d->qstringCacheDigitsCahnged=1;
+}
+
+/**
+ * @brief QBase::realloc pDigitsArray and increase it to 5.
+ */
+
+void QBase::realloc() {
+    QBaseDigit **new_pDigitsArray = new QBaseDigit*[d->digitsMax+5];
+
+    for(uint i = 0; i < d->digitsLen; ++i)
+        new_pDigitsArray[i] = pDigitsArray[i];
+
+    d->digitsMax+=5;
+
+    delete[] pDigitsArray;
+
+    pDigitsArray = new_pDigitsArray;
+}
+
+void QBase::addNewDigit() {
+    if(d->digitsLen == d->digitsMax)
+        realloc();
+
+    pDigitsArray[d->digitsLen] = new QBaseDigit(d->base);
+
+    d->nextDigitAddition *= d->base;
+
+    pDigitsArray[d->digitsLen-1]->addNextDigit(pDigitsArray[d->digitsLen]);
+
+    d->qstringCacheDigitsCahnged++;
+
+    d->digitsLen++;
 }

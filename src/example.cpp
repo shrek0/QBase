@@ -6,10 +6,13 @@ using namespace std;
 
 int main()
 {
-    QString baseChars = "0123456789ABCDEF";
+    QString baseChars = "01";
     QBase qbase(baseChars);
 
-    qbase.step();
+    for(uint i = 0; i < 100; ++i) {
+        qbase.step();
+        cout << qbase.toQString().toStdString() << endl;
+    }
 
     return 0;
 }
